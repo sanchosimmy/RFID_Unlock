@@ -3,22 +3,17 @@
 
 #include <SPI.h>
 #include <MFRC522.h>
-#define SS_PIN 10 //SDA
-#define RST_PIN 5
-#define KEY_RETURN 0xB0   
-//mosi 11
-//miso 12
-//sck 13
+
 
  
-MFRC522 mfrc522 ( SS_PIN, RST_PIN ) ;
+MFRC522 mfrc522 ( 10, 5 ) ;
            //Return key is declared as Enter.
-String readid;
+String read_id_number;
 String card1="DB84B121"; 
 String card2="DB 84 B1 21"; 
 String card3="db 84 b1 21"; 
 String card4="db84b121"; 
-char Enter = KEY_RETURN;     
+char Enter = 0xB0;     
 
 
              //Change this value to the UID of your card.
@@ -33,10 +28,10 @@ Keyboard.begin();
 
 void temp(byte *buffer, byte bufferSize)//function to store card uid as a string datatype.
 {
-  readid="";
+  read_id_number="";
   for(byte i = 0;i<bufferSize; i++)
   {
-    readid=readid+String(buffer[i], HEX);
+    read_id_number=read_id_number+String(buffer[i], HEX);
   }
 }
 void loop( ) 
@@ -49,16 +44,16 @@ void loop( )
  {
   return;
  }
- mfrc522.PICC_DumpToSerial(&(mfrc522.uid));  // Display card details in serial Monitor.
+ mfrc522.PICC_DumpToSerial(&(mfrc522.uid));  
  temp(mfrc522.uid.uidByte, mfrc522.uid.size);
- if(readid==card1 || readid==card2 || readid==card3 || readid==card4)
+ if(read_id_number==card1 || read_id_number==card2 || read_id_number==card3 || read_id_number==card4)
  {  Serial.println("PC Unlocked");
- Keyboard.press(KEY_LEFT_GUI);              //Press the left windows key.
- Keyboard.press('l');                       //Press the "l" key.
- Keyboard.releaseAll();                     //Release all keys.
+ Keyboard.press(KEY_LEFT_GUI);              
+ Keyboard.press('l');                     
+ Keyboard.releaseAll();                     
  delay (100);
-// Keyboard.press(Enter);                     //Press the Enter key.
-//Keyboard.release(Enter);                   //Release the Enter key.
+// Keyboard.press(Enter);                 
+//Keyboard.release(Enter);                 
 delay(100);
 Keyboard.print("2802");                    // Change this value to your Windows PIN/Password.
  Keyboard.releaseAll();
@@ -70,7 +65,7 @@ Keyboard.print("2802");                    // Change this value to your Windows 
  }
  else
  {Serial.println("Wrong card !!!!!");
- //Serial.println(readid);
+ //Serial.println(read_id_number);
   return;
  } 
 }
